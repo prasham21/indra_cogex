@@ -8,6 +8,51 @@
         <p class="lead">
             {% block lead %}{% endblock %}
         </p>
-        {{ wtf.render_form(form) }}
+
+        <!-- Discrete Form -->
+        <form method="POST" data-submit-button-id="discrete-submit-btn">
+            {{ wtf.render_form(discrete_form) }}
+            <div id="discrete-form-spinner" class="spinner-border text-primary d-none" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <button type="submit" id="discrete-submit-btn" class="btn btn-primary">Submit</button>
+        </form>
+
+        <!-- Signed Form -->
+        <form method="POST" data-submit-button-id="signed-submit-btn">
+            {{ wtf.render_form(signed_form) }}
+            <div id="signed-form-spinner" class="spinner-border text-primary d-none" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <button type="submit" id="signed-submit-btn" class="btn btn-primary">Submit</button>
+        </form>
+
+        <!-- Continuous Form -->
+        <form method="POST" data-submit-button-id="continuous-submit-btn">
+            {{ wtf.render_form(continuous_form) }}
+            <div id="continuous-form-spinner" class="spinner-border text-primary d-none" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <button type="submit" id="continuous-submit-btn" class="btn btn-primary">Submit</button>
+        </form>
     </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form');
+
+        forms.forEach(function(form) {
+            const spinner = document.getElementById(form.dataset.submitButtonId + '-spinner');
+            const submitButton = form.querySelector('#' + form.dataset.submitButtonId);
+
+            form.addEventListener('submit', function(event) {
+                spinner.classList.remove('d-none'); // Show the spinner
+                submitButton.disabled = true; // Disable the submit button
+            });
+        });
+    });
+</script>
+{% endblock %}
+
