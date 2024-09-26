@@ -75,7 +75,7 @@ metabolites_field = TextAreaField(
 
 
 class DiscreteForm(FlaskForm):
-    """A form for discrete metabolute set enrichment analysis."""
+    """A form for discrete metabolite set enrichment analysis."""
 
     metabolites = metabolites_field
     minimum_evidence = minimum_evidence_field
@@ -83,7 +83,7 @@ class DiscreteForm(FlaskForm):
     alpha = alpha_field
     correction = correction_field
     keep_insignificant = keep_insignificant_field
-    submit = SubmitField("Submit")
+    submit = SubmitField("Submit", render_kw={"id": "metabolite-submit-btn"})
 
     def parse_metabolites(self) -> Tuple[Mapping[str, str], List[str]]:
         """Resolve the contents of the text field."""
