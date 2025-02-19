@@ -229,9 +229,9 @@ def shared_pathways_between_gene_sets(source_hgnc_ids, target_hgnc_ids):
         if result:
             # Convert BioEntity objects to dictionaries
             formatted_pathways = [{
-                'id': pathway.id,
-                'name': pathway.name,
-                'version': pathway.version
+                'id': getattr(pathway, 'id', ''),
+                'name': getattr(pathway, 'name', ''),
+                'version': getattr(pathway, 'version', '')
             } for pathway in result]
             shared_pathways_list.append(formatted_pathways)
 
