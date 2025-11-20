@@ -3392,6 +3392,17 @@ def build_edges_from_graph(graph, statements, input_node_names, include_db_evide
             edge_key = (agents[0].name, agents[1].name, stmt_type)
             statements_by_edge[edge_key].append(stmt)
 
+    # --- NEW: compute max evidence per undirected node-pair ---
+    max_ev_per_pair = defaultdict(int)
+    for (s, t, stmt_type), stmts in statements_by_edge.items():
+        pair = tuple(sorted([s, t]))
+        ev_sum = sum(
+            evidence_counts.get(stmt.get_hash(), 0) if evidence_counts else len(stmt.evidence)
+            for stmt in stmts
+        )
+        if ev_sum > max_ev_per_pair[pair]:
+            max_ev_per_pair[pair] = ev_sum
+
     edges = []
     edge_count = 0
     seen_keys = set()
@@ -3448,9 +3459,13 @@ def build_edges_from_graph(graph, statements, input_node_names, include_db_evide
         else:
             width = 4.0
 
-        # Calculate edge opacity based on belief
-        belief = getattr(edge_stmt, 'belief', 0.5)
-        edge_opacity = 0.4 + (belief * 0.6)
+        # Evidence-based opacity
+        pair = tuple(sorted([source, target]))
+        max_ev = max_ev_per_pair.get(pair, total_evidence)
+        if total_evidence >= max_ev:
+            edge_opacity = 1.0
+        else:
+            edge_opacity = 0.5
 
         # Get color and styling
         base_color, dashes, arrows = _get_edge_styling(stmt_type)
@@ -3473,7 +3488,7 @@ def build_edges_from_graph(graph, statements, input_node_names, include_db_evide
         actual_stmt_type = edge_stmt.__class__.__name__
         edge_details = {
             'statement_type': actual_stmt_type,
-            'belief': belief,
+            'belief': getattr(edge_stmt, 'belief', 0.5),
             'indra_statement': str(edge_stmt),
             'interaction': actual_stmt_type.lower(),
             'polarity': _get_polarity(actual_stmt_type),
@@ -3505,6 +3520,7 @@ def build_edges_from_graph(graph, statements, input_node_names, include_db_evide
         edge_count += 1
 
     return edges
+
 
 
 
