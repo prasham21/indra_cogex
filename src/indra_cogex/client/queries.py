@@ -3392,7 +3392,7 @@ def build_edges_from_graph(graph, statements, input_node_names, include_db_evide
             edge_key = (agents[0].name, agents[1].name, stmt_type)
             statements_by_edge[edge_key].append(stmt)
 
-    # --- NEW: compute max evidence per undirected node-pair ---
+    # compute max evidence per undirected node-pair
     max_ev_per_pair = defaultdict(int)
     for (s, t, stmt_type), stmts in statements_by_edge.items():
         pair = tuple(sorted([s, t]))
